@@ -50,6 +50,7 @@ class MyAppScreen extends StatefulWidget
 
 class _MyAppState extends State<MyAppScreen>
 {
+  List<String> stored_items =[];
   List<String> _itemList =
   [
     'abc1',
@@ -59,7 +60,8 @@ class _MyAppState extends State<MyAppScreen>
     'abc5',
   ];
 
-  List<String> stored_items = new List.empty(growable: true);
+
+
   
   @override
   Widget build(BuildContext context) 
@@ -77,6 +79,17 @@ class _MyAppState extends State<MyAppScreen>
           return ListTile
           (
             title: Text(_itemList[index]),
+            trailing: Row
+            (
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton
+                (
+                  onPressed: () => _deleteItem(index), 
+                  icon: Icon(Icons.delete)
+                )
+              ],
+            ),
 
           );
         },
@@ -91,6 +104,14 @@ class _MyAppState extends State<MyAppScreen>
           child: Icon(Icons.add),
         ),
     );
+  }
+
+  void _deleteItem(int index)
+  {
+    setState(() 
+    {
+      _itemList.removeAt(index);
+    });
   }
 
   void _addNewItem(BuildContext context)
