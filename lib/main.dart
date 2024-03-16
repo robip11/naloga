@@ -20,16 +20,21 @@ class MyApp extends StatelessWidget
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
        ),
       
-        home: MyAppScreen(),
+        home: HomePage(),
       );
    
   }
 }
 
-class MyAppScreen extends StatefulWidget
+class MyAppState extends ChangeNotifier 
+{
+
+}
+
+class HomePage extends StatefulWidget
 {
   @override
-  _MyAppState createState() => _MyAppState();
+  _HomePage createState() => _HomePage();
   
 }
 
@@ -41,28 +46,31 @@ class Item
   Item(this.name, this.isChecked);
 }
 
-class _MyAppState extends State<MyAppScreen>
-{
-  var selectedIndex = 0;
-
   List<Item> _checkedItemsList =[];
   List<Item> _itemsList =[];
+
+class _HomePage extends State<HomePage>
+{
+  //var selectedIndex = 0;
+
+
 
   @override
   Widget build(BuildContext context) 
   {
-    Widget page;
+    // Widget page;
+    // switch (selectedIndex) 
+    // {
+    //   case 0:
+    //     page = HomePage();
+    //     break;
+    //   case 1:
+    //     page = StoredItemsScreen();
+    //     break;
+    //   default:
+    //     throw UnimplementedError('no widget for $selectedIndex');
+    // }
 
-    switch (selectedIndex)
-    {
-      case 0:
-        page = MyAppScreen();
-        break;
-      case 1:
-        page = StoredItemsScreen();
-        break;
-    }
-    
     return LayoutBuilder
     (
       builder: (context, constraints) 
@@ -105,6 +113,8 @@ class _MyAppState extends State<MyAppScreen>
                   setState(() 
                   {
                     _itemsList[index].isChecked = value!;
+                    _checkedItemsList.add(_itemsList[index]);
+                    
                     _checkedItem(index);
                   });
                 },
@@ -117,19 +127,55 @@ class _MyAppState extends State<MyAppScreen>
             (
               destinations: 
               [
-                NavigationDestination
+                IconButton
                 (
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                     context,
+                     MaterialPageRoute(builder: (context) => HomePage())
+                    );
+                  }, 
                   icon: Icon(Icons.home),
-                  label: ('Home'),
                 ),
-                NavigationDestination
+                IconButton
                 (
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                     context,
+                     MaterialPageRoute(builder: (context) => StoredItemsPage())
+                    );
+                  }, 
+                  //label: Text('Checked Item'),
                   icon: Icon(Icons.done),
-                  label: ('Ckecked Items'),
-                ),
+                )
+
+                // ,NavigationDestination
+                // (
+                //   icon: Icon(Icons.home),
+                //   label: ('Home'),
+                // ),
+                // NavigationDestination
+                // (
+                //   icon: Icon(Icons.done),
+                //   label: ('Checked Items'),
+                // ),
               ],
+              // selectedIndex: selectedIndex,
+              // onDestinationSelected: (value)
+              // {
+              //   setState(() 
+              //   {
+              //     selectedIndex = value;
+              //   });
+              // }
             ),
-        
+
+
+
           floatingActionButton: FloatingActionButton
           (
             onPressed: () 
@@ -173,7 +219,6 @@ class _MyAppState extends State<MyAppScreen>
 
   void _editItem(int index) 
   {
-
     TextEditingController editController = TextEditingController(text: _itemsList[index].name);
     showDialog
     (
@@ -228,20 +273,93 @@ class _MyAppState extends State<MyAppScreen>
   }
 }
 
-class StoredItemsScreen extends StatelessWidget
+class StoredItemsPage extends StatefulWidget
 {
+  @override
+  _StoredItemsPage createState() => _StoredItemsPage();
+  
+}
+
+class _StoredItemsPage extends State<StoredItemsPage>
+{
+
   @override
   Widget build(BuildContext context) 
   {
-    var myAppState = context;
-
-    return ListView.builder(
-
+    return LayoutBuilder
+    (
+      builder: (context, constraints) 
+      {
+        return Scaffold
+        (
+          body: ListView.builder
+          (
+            itemCount: _checkedItemsList.length,
             itemBuilder: (context, index)
             {
-              return CheckboxListTile
-              (value: null, onChanged: (bool? value) {  },              );
+              return ListTile
+              (
+                title: Text(_checkedItemsList[index].name),
+                leading: Row
+                (
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>
+                  [
+                    IconButton
+                    (
+                      tooltip: 'Uncheck Item',
+                      onPressed: () => _deleteItem(index), 
+                      icon: Icon(Icons.check_box)
+                    )
+                  ],
+                )
+              );
             }
-          );
+          ),
+          bottomNavigationBar: 
+            NavigationBar
+            (
+              destinations: 
+              [
+                IconButton
+                (
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                     context,
+                     MaterialPageRoute(builder: (context) => HomePage())
+                    );
+                  }, 
+                  icon: Icon(Icons.home),
+                ),
+                IconButton
+                (
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                     context,
+                     MaterialPageRoute(builder: (context) => StoredItemsPage())
+                    );
+                  }, 
+                  //label: Text('Checked Item'),
+                  icon: Icon(Icons.done),
+                )
+              ],
+            ),
+        );
+    
+      }
+    );
+  }
+
+  void _deleteItem(int index)
+  {
+    setState(() 
+    {
+      _checkedItemsList.removeAt(index);
+      _itemsList.remove(_checkedItemsList[index]);
+    });
   }
 }
