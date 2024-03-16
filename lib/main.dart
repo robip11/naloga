@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 void main() 
 {
   runApp(MyApp());
@@ -9,7 +10,6 @@ class MyApp extends StatelessWidget
 {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) 
   {
@@ -17,21 +17,6 @@ class MyApp extends StatelessWidget
       (
         title: 'Naloga',
         theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
        ),
       
@@ -48,127 +33,118 @@ class MyAppScreen extends StatefulWidget
   
 }
 
+class Item
+{
+  String name;
+  bool isChecked;
+
+  Item(this.name, this.isChecked);
+}
+
 class _MyAppState extends State<MyAppScreen>
 {
-  bool? _checked = false;
-  List<String> _checkedItemsList =[];
-  List<String> _itemsList =
-  [
-    'abc1',
-    'abc2',
-    'abc3',
-    'abc4',
-    'abc5',
-  ];
+  var selectedIndex = 0;
+
+  List<Item> _checkedItemsList =[];
+  List<Item> _itemsList =[];
 
   @override
   Widget build(BuildContext context) 
   {
-    return Scaffold
+    Widget page;
+
+    switch (selectedIndex)
+    {
+      case 0:
+        page = MyAppScreen();
+        break;
+      case 1:
+        page = StoredItemsScreen();
+        break;
+    }
+    
+    return LayoutBuilder
     (
-      appBar: AppBar
-      (
-        title: Text('Items List'),
-      ),
-      body: ListView.builder(
-        itemCount: _itemsList.length,
-        itemBuilder: (context, index)
-        {
-          return CheckboxListTile
+      builder: (context, constraints) 
+      {
+        return Scaffold
+        (
+          body: ListView.builder
           (
-            title: Text(_itemsList[index]),
-            secondary: Row
-            (
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>
-              [
-                IconButton
+            itemCount: _itemsList.length,
+            itemBuilder: (context, index)
+            {
+              return CheckboxListTile
+              (
+                title: Text(_itemsList[index].name),
+                secondary: Row
                 (
-                  tooltip: 'Edit Item',
-                  onPressed: () => _editItem(index), 
-                  icon: Icon(Icons.edit)
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>
+                  [
+                    IconButton
+                    (
+                      tooltip: 'Edit Item',
+                      onPressed: () => _editItem(index), 
+                      icon: Icon(Icons.edit)
+                    ),
+                    IconButton
+                    (
+                      tooltip: 'Delete Item',
+                      onPressed: () => _deleteItem(index), 
+                      icon: Icon(Icons.delete)
+                    )
+                  ],
                 ),
-                IconButton
+        
+                controlAffinity: 
+                ListTileControlAffinity.leading,
+                value: _itemsList[index].isChecked, 
+                onChanged: (value) 
+                {
+                  setState(() 
+                  {
+                    _itemsList[index].isChecked = value!;
+                    _checkedItem(index);
+                  });
+                },
+                );
+            }
+          ),
+
+          bottomNavigationBar: 
+            NavigationBar
+            (
+              destinations: 
+              [
+                NavigationDestination
                 (
-                  tooltip: 'Delete Item',
-                  onPressed: () => _deleteItem(index), 
-                  icon: Icon(Icons.delete)
-                )
+                  icon: Icon(Icons.home),
+                  label: ('Home'),
+                ),
+                NavigationDestination
+                (
+                  icon: Icon(Icons.done),
+                  label: ('Ckecked Items'),
+                ),
               ],
             ),
-
-            controlAffinity: 
-            ListTileControlAffinity.leading,
-            value: _checked, 
-            onChanged: (value) 
-            {
-              setState(() 
-              {
-                _checked = value;
-              });
-            },
-            );
-
-        }
-            
-      ),
-    
-    
-
-
-
-
-        //   return ListTile
-        //   (
-            
-        //     leading: Checkbox
-        //     (
-        //       bool _isChecked = false;
-        //       onChanged: () 
-        //       {
-                
-        //       },
-        //       value: _isChecked,
-        //       ),
-        //     title: Text(_itemsList[index]),
-        //     trailing: Row
-        //     (
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: <Widget>
-        //       [
-        //         IconButton
-        //         (
-        //           tooltip: 'Edit Item',
-        //           onPressed: () => _editItem(index), 
-        //           icon: Icon(Icons.edit)
-        //         ),
-        //         IconButton
-        //         (
-        //           tooltip: 'Delete Item',
-        //           onPressed: () => _deleteItem(index), 
-        //           icon: Icon(Icons.delete)
-        //         )
-        //       ],
-        //     ),
-
-        //   );
-        // },
-        // ),
-
-        floatingActionButton: FloatingActionButton
-        (
-          onPressed: () 
-          {
-            _addNewItem();
-          },
-          tooltip: 'Add Item',
-          child: Icon(Icons.add),
         
-    )
+          floatingActionButton: FloatingActionButton
+          (
+            onPressed: () 
+            {
+              _addNewItem();
+            },
+            tooltip: 'Add Item',
+            child: Icon(Icons.add),
+          )
+        );
+      }
     );
   }
 
-   void _addNewItem()
+  void _addNewItem()
   {
     showDialog
     (
@@ -184,7 +160,8 @@ class _MyAppState extends State<MyAppScreen>
             {
               setState(() 
               {
-                _itemsList.add(value);
+                var a = Item(value, false);
+                _itemsList.add(a);
               });
               Navigator.pop(context);
             },
@@ -197,7 +174,7 @@ class _MyAppState extends State<MyAppScreen>
   void _editItem(int index) 
   {
 
-    TextEditingController editController = TextEditingController(text: _itemsList[index]);
+    TextEditingController editController = TextEditingController(text: _itemsList[index].name);
     showDialog
     (
       context: context,
@@ -207,17 +184,13 @@ class _MyAppState extends State<MyAppScreen>
         (
           title: Text('Edit Item'),
           content: TextField
-
-
-          
-            
             (
             controller: editController,
             onSubmitted: (value)
             {
               setState(() 
               {
-                _itemsList[index] = editController.text;
+                _itemsList[index].name = editController.text;
               });
               Navigator.pop(context);
             },
@@ -227,17 +200,11 @@ class _MyAppState extends State<MyAppScreen>
     );
   }
 
-  void _saveItem(int index)
-  {
-    
-  }
-
   void _checkedItem(int index)
   {
     setState(() {
       _checkedItemsList.add(_itemsList[index]);
     });
-
   }
 
   void _deleteItem(int index)
@@ -259,127 +226,22 @@ class _MyAppState extends State<MyAppScreen>
       _checkedItemsList.add(_itemsList[index]);
     }
   }
-
- 
-
 }
 
-class MyHomePage extends StatefulWidget 
+class StoredItemsScreen extends StatelessWidget
 {
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> 
-{
-  int _counter = 0;
-
-  void _incrementCounter() 
-  {
-    setState(() 
-    {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) 
   {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold
-    (
-      appBar: AppBar
-      (
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        
-        
-        //title: Text(widget.title),
-      ),
-      body: Center
-      (
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column
-        (
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>
-          [
-            const Text
-            (
-              'You have pushed the button this many times:',
-            ),
-            Text
-            (
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton
-      (
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+    var myAppState = context;
+
+    return ListView.builder(
+
+            itemBuilder: (context, index)
+            {
+              return CheckboxListTile
+              (value: null, onChanged: (bool? value) {  },              );
+            }
+          );
   }
 }
-
-// class SelectedPage extends StatelessWidget
-// {
-//   @override
-//   Widget build(BuildContext context) 
-//   {
-//     var appState = context;
-//     return ListView
-//     (
-//       children: 
-//       [
-//         for (var pair in appState.stored_item)
-//         ListTile
-//         (
-//           title: Text(pair.asLowerCase),
-//         )
-//       ],
-//     );
-//   }
-  
-// }
