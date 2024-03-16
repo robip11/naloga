@@ -50,8 +50,9 @@ class MyAppScreen extends StatefulWidget
 
 class _MyAppState extends State<MyAppScreen>
 {
-  List<String> stored_items =[];
-  List<String> _itemList =
+  bool? _checked = false;
+  List<String> _checkedItemsList =[];
+  List<String> _itemsList =
   [
     'abc1',
     'abc2',
@@ -60,9 +61,6 @@ class _MyAppState extends State<MyAppScreen>
     'abc5',
   ];
 
-
-
-  
   @override
   Widget build(BuildContext context) 
   {
@@ -73,48 +71,104 @@ class _MyAppState extends State<MyAppScreen>
         title: Text('Items List'),
       ),
       body: ListView.builder(
-        itemCount: _itemList.length,
+        itemCount: _itemsList.length,
         itemBuilder: (context, index)
         {
-          return ListTile
+          return CheckboxListTile
           (
-            title: Text(_itemList[index]),
-            trailing: Row
+            title: Text(_itemsList[index]),
+            secondary: Row
             (
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
+              children: <Widget>
+              [
                 IconButton
                 (
+                  tooltip: 'Edit Item',
+                  onPressed: () => _editItem(index), 
+                  icon: Icon(Icons.edit)
+                ),
+                IconButton
+                (
+                  tooltip: 'Delete Item',
                   onPressed: () => _deleteItem(index), 
                   icon: Icon(Icons.delete)
                 )
               ],
             ),
 
-          );
-        },
-        ),
+            controlAffinity: 
+            ListTileControlAffinity.leading,
+            value: _checked, 
+            onChanged: (value) 
+            {
+              setState(() 
+              {
+                _checked = value;
+              });
+            },
+            );
+
+        }
+            
+      ),
+    
+    
+
+
+
+
+        //   return ListTile
+        //   (
+            
+        //     leading: Checkbox
+        //     (
+        //       bool _isChecked = false;
+        //       onChanged: () 
+        //       {
+                
+        //       },
+        //       value: _isChecked,
+        //       ),
+        //     title: Text(_itemsList[index]),
+        //     trailing: Row
+        //     (
+        //       mainAxisSize: MainAxisSize.min,
+        //       children: <Widget>
+        //       [
+        //         IconButton
+        //         (
+        //           tooltip: 'Edit Item',
+        //           onPressed: () => _editItem(index), 
+        //           icon: Icon(Icons.edit)
+        //         ),
+        //         IconButton
+        //         (
+        //           tooltip: 'Delete Item',
+        //           onPressed: () => _deleteItem(index), 
+        //           icon: Icon(Icons.delete)
+        //         )
+        //       ],
+        //     ),
+
+        //   );
+        // },
+        // ),
+
         floatingActionButton: FloatingActionButton
         (
           onPressed: () 
           {
-            _addNewItem(context);
+            _addNewItem();
           },
           tooltip: 'Add Item',
           child: Icon(Icons.add),
-        ),
+        
+    )
     );
   }
 
-  void _deleteItem(int index)
-  {
-    setState(() 
-    {
-      _itemList.removeAt(index);
-    });
-  }
-
-  void _addNewItem(BuildContext context)
+   void _addNewItem()
   {
     showDialog
     (
@@ -124,25 +178,89 @@ class _MyAppState extends State<MyAppScreen>
         return AlertDialog
         (
           title: Text('Add New Item'),
-          content: TextField(
-            autocorrect: true,
+          content: TextField
+          (
             onSubmitted: (value)
             {
               setState(() 
               {
-                _itemList.add(value);
+                _itemsList.add(value);
               });
               Navigator.pop(context);
             },
-            decoration: InputDecoration
-            (
-              hintText: 'Enter item name',
-            ),
             ),
         );
       }
     );
   }
+
+  void _editItem(int index) 
+  {
+
+    TextEditingController editController = TextEditingController(text: _itemsList[index]);
+    showDialog
+    (
+      context: context,
+      builder: (context)
+      {
+        return AlertDialog
+        (
+          title: Text('Edit Item'),
+          content: TextField
+
+
+          
+            
+            (
+            controller: editController,
+            onSubmitted: (value)
+            {
+              setState(() 
+              {
+                _itemsList[index] = editController.text;
+              });
+              Navigator.pop(context);
+            },
+            ),
+        );
+      }
+    );
+  }
+
+  void _saveItem(int index)
+  {
+    
+  }
+
+  void _checkedItem(int index)
+  {
+    setState(() {
+      _checkedItemsList.add(_itemsList[index]);
+    });
+
+  }
+
+  void _deleteItem(int index)
+  {
+    setState(() 
+    {
+      _itemsList.removeAt(index);
+    });
+  }
+
+  void _checkbox(int index)
+  {
+    if (_checkedItemsList.contains(_itemsList[index]))
+    {
+      _checkedItemsList.remove(_itemsList[index]);
+    }
+    else
+    {
+      _checkedItemsList.add(_itemsList[index]);
+    }
+  }
+
+ 
 
 }
 
