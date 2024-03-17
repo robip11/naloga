@@ -17,18 +17,13 @@ class MyApp extends StatelessWidget
       (
         title: 'Naloga',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
        ),
       
         home: const HomePage(),
       );
    
   }
-}
-
-class MyAppState extends ChangeNotifier 
-{
-
 }
 
 class HomePage extends StatefulWidget
@@ -58,6 +53,85 @@ List<Item> _itemsList =
 
 class _HomePage extends State<HomePage>
 {
+  void _addNewItem()
+  {
+    showDialog
+    (
+      context: context,
+      builder: (context) 
+      {
+        return AlertDialog
+        (
+          title: const Text('Add New Item'),
+          content: TextField
+          (
+            onSubmitted: (value)
+            {
+              setState(() 
+              {
+                var a = Item(value, false);
+                _itemsList.add(a);
+              });
+              Navigator.pop(context);
+            },
+            ),
+        );
+      }
+    );
+  }
+
+  void _editItem(int index) 
+  {
+    TextEditingController editController = TextEditingController(text: _itemsList[index].name);
+    showDialog
+    (
+      context: context,
+      builder: (context)
+      {
+        return AlertDialog
+        (
+          title: const Text('Edit Item'),
+          content: TextField
+            (
+            controller: editController,
+            onSubmitted: (value)
+            {
+              setState(() 
+              {
+                _itemsList[index].name = editController.text;
+              });
+              Navigator.pop(context);
+            },
+            ),
+        );
+      }
+    );
+  }
+  
+  void _deleteItem(Item item)
+  {
+    setState(() 
+    {
+      _itemsList.remove(item);
+      _checkedItemsList.remove(item);
+
+    });
+  }
+
+  void _checkbox(Item item)
+  {
+    setState((){
+    if (_checkedItemsList.contains(item))
+    {
+      _checkedItemsList.remove(item);
+      item.isChecked = false;
+    }
+    else
+    {
+      _checkedItemsList.add(item);
+      item.isChecked = true;
+    }});
+  }
   @override
   Widget build(BuildContext context) 
   {
@@ -67,19 +141,6 @@ class _HomePage extends State<HomePage>
       {
         return Scaffold
         (
-          appBar: AppBar
-          ( 
-            title: const Text('Shopping List'),
-            actions: 
-            [
-              IconButton
-              (
-                onPressed:(){ filterItem(); },
-                icon: const Icon(Icons.filter_list)
-              )
-            ],
-          ),
-
           body: ListView.builder
           (
             itemCount: _itemsList.length,
@@ -102,7 +163,7 @@ class _HomePage extends State<HomePage>
                     IconButton
                     (
                       tooltip: 'Delete Item',
-                      onPressed: () => _deleteItem(index), 
+                      onPressed: () => _deleteItem(_itemsList[index]), 
                       icon: const Icon(Icons.delete)
                     )
                   ],
@@ -116,8 +177,6 @@ class _HomePage extends State<HomePage>
                   setState(() 
                   {
                     _itemsList[index].isChecked = value!;
-                    //_checkedItemsList.add(_itemsList[index]);
-                    //_checkedItem(index);
                     _checkbox(_itemsList[index]);
                   });
                 },
@@ -169,92 +228,6 @@ class _HomePage extends State<HomePage>
       }
     );
   }
-
-  void _addNewItem()
-  {
-    showDialog
-    (
-      context: context,
-      builder: (BuildContext context) 
-      {
-        return AlertDialog
-        (
-          title: const Text('Add New Item'),
-          content: TextField
-          (
-            onSubmitted: (value)
-            {
-              setState(() 
-              {
-                var a = Item(value, false);
-                _itemsList.add(a);
-              });
-              Navigator.pop(context);
-            },
-            ),
-        );
-      }
-    );
-  }
-
-  void _editItem(int index) 
-  {
-    TextEditingController editController = TextEditingController(text: _itemsList[index].name);
-    showDialog
-    (
-      context: context,
-      builder: (context)
-      {
-        return AlertDialog
-        (
-          title: const Text('Edit Item'),
-          content: TextField
-            (
-            controller: editController,
-            onSubmitted: (value)
-            {
-              setState(() 
-              {
-                _itemsList[index].name = editController.text;
-              });
-              Navigator.pop(context);
-            },
-            ),
-        );
-      }
-    );
-  }
-  void filterItem() { 
-    setState(() { 
-      _checkedItemsList =  _itemsList.where((item) => item.isChecked).toList(); 
-    });}
-
-
-
-  void _deleteItem(int index)
-  {
-    setState(() 
-    {
-      _itemsList.removeAt(index);
-    });
-  }
-
-
-void _checkbox(Item item)
-{
-  setState((){
-  if (_checkedItemsList.contains(item))
-  {
-    _checkedItemsList.remove(item);
-    item.isChecked = false;
-  }
-  else
-  {
-    _checkedItemsList.add(item);
-    item.isChecked = true;
-  }});
-}
-  
 }
 
 class StoredItemsPage extends StatefulWidget
@@ -268,6 +241,23 @@ class StoredItemsPage extends StatefulWidget
 
 class _StoredItemsPage extends State<StoredItemsPage>
 {
+  void _checkbox(Item item)
+  {
+    setState(()
+    {
+    if (_checkedItemsList.contains(item))
+    {
+      _checkedItemsList.remove(item);
+      item.isChecked = false;
+    }
+    else
+    {
+      _checkedItemsList.add(item);
+      item.isChecked = true;
+    }
+    }
+  );
+  }
 
   @override
   Widget build(BuildContext context) 
@@ -328,30 +318,13 @@ class _StoredItemsPage extends State<StoredItemsPage>
                      context,
                      MaterialPageRoute(builder: (context) => const StoredItemsPage())
                     );
-                  }, 
-                  //label: Text('Checked Item'),
+                  },
                   icon: const Icon(Icons.done),
                 )
               ],
             ),
         );
-    
       }
     );
   }
-
-  void _checkbox(Item item)
-{
-  setState((){
-  if (_checkedItemsList.contains(item))
-  {
-    _checkedItemsList.remove(item);
-    item.isChecked = false;
-  }
-  else
-  {
-    _checkedItemsList.add(item);
-    item.isChecked = true;
-  }});
-}
 }
