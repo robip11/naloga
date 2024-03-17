@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 void main() 
 {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
        ),
       
-        home: HomePage(),
+        home: const HomePage(),
       );
    
   }
@@ -33,6 +33,8 @@ class MyAppState extends ChangeNotifier
 
 class HomePage extends StatefulWidget
 {
+  const HomePage({super.key});
+
   @override
   _HomePage createState() => _HomePage();
   
@@ -46,37 +48,38 @@ class Item
   Item(this.name, this.isChecked);
 }
 
-  List<Item> _checkedItemsList =[];
-  List<Item> _itemsList =[];
+List<Item> _checkedItemsList =[];
+List<Item> _itemsList =
+[
+  Item('Item 1', false),
+  Item('Item 2', false),
+  Item('Item 3', false),
+];
 
 class _HomePage extends State<HomePage>
 {
-  //var selectedIndex = 0;
-
-
-
   @override
   Widget build(BuildContext context) 
   {
-    // Widget page;
-    // switch (selectedIndex) 
-    // {
-    //   case 0:
-    //     page = HomePage();
-    //     break;
-    //   case 1:
-    //     page = StoredItemsScreen();
-    //     break;
-    //   default:
-    //     throw UnimplementedError('no widget for $selectedIndex');
-    // }
-
     return LayoutBuilder
     (
       builder: (context, constraints) 
       {
         return Scaffold
         (
+          appBar: AppBar
+          ( 
+            title: const Text('Shopping List'),
+            actions: 
+            [
+              IconButton
+              (
+                onPressed:(){ filterItem(); },
+                icon: const Icon(Icons.filter_list)
+              )
+            ],
+          ),
+
           body: ListView.builder
           (
             itemCount: _itemsList.length,
@@ -94,13 +97,13 @@ class _HomePage extends State<HomePage>
                     (
                       tooltip: 'Edit Item',
                       onPressed: () => _editItem(index), 
-                      icon: Icon(Icons.edit)
+                      icon: const Icon(Icons.edit)
                     ),
                     IconButton
                     (
                       tooltip: 'Delete Item',
                       onPressed: () => _deleteItem(index), 
-                      icon: Icon(Icons.delete)
+                      icon: const Icon(Icons.delete)
                     )
                   ],
                 ),
@@ -113,9 +116,9 @@ class _HomePage extends State<HomePage>
                   setState(() 
                   {
                     _itemsList[index].isChecked = value!;
-                    _checkedItemsList.add(_itemsList[index]);
-                    
-                    _checkedItem(index);
+                    //_checkedItemsList.add(_itemsList[index]);
+                    //_checkedItem(index);
+                    _checkbox(_itemsList[index]);
                   });
                 },
                 );
@@ -134,10 +137,10 @@ class _HomePage extends State<HomePage>
                     Navigator.push
                     (
                      context,
-                     MaterialPageRoute(builder: (context) => HomePage())
+                     MaterialPageRoute(builder: (context) => const HomePage())
                     );
                   }, 
-                  icon: Icon(Icons.home),
+                  icon: const Icon(Icons.home),
                 ),
                 IconButton
                 (
@@ -146,36 +149,13 @@ class _HomePage extends State<HomePage>
                     Navigator.push
                     (
                      context,
-                     MaterialPageRoute(builder: (context) => StoredItemsPage())
+                     MaterialPageRoute(builder: (context) => const StoredItemsPage())
                     );
                   }, 
-                  //label: Text('Checked Item'),
-                  icon: Icon(Icons.done),
+                  icon: const Icon(Icons.done),
                 )
-
-                // ,NavigationDestination
-                // (
-                //   icon: Icon(Icons.home),
-                //   label: ('Home'),
-                // ),
-                // NavigationDestination
-                // (
-                //   icon: Icon(Icons.done),
-                //   label: ('Checked Items'),
-                // ),
               ],
-              // selectedIndex: selectedIndex,
-              // onDestinationSelected: (value)
-              // {
-              //   setState(() 
-              //   {
-              //     selectedIndex = value;
-              //   });
-              // }
             ),
-
-
-
           floatingActionButton: FloatingActionButton
           (
             onPressed: () 
@@ -183,7 +163,7 @@ class _HomePage extends State<HomePage>
               _addNewItem();
             },
             tooltip: 'Add Item',
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           )
         );
       }
@@ -199,7 +179,7 @@ class _HomePage extends State<HomePage>
       {
         return AlertDialog
         (
-          title: Text('Add New Item'),
+          title: const Text('Add New Item'),
           content: TextField
           (
             onSubmitted: (value)
@@ -227,7 +207,7 @@ class _HomePage extends State<HomePage>
       {
         return AlertDialog
         (
-          title: Text('Edit Item'),
+          title: const Text('Edit Item'),
           content: TextField
             (
             controller: editController,
@@ -244,13 +224,12 @@ class _HomePage extends State<HomePage>
       }
     );
   }
+  void filterItem() { 
+    setState(() { 
+      _checkedItemsList =  _itemsList.where((item) => item.isChecked).toList(); 
+    });}
 
-  void _checkedItem(int index)
-  {
-    setState(() {
-      _checkedItemsList.add(_itemsList[index]);
-    });
-  }
+
 
   void _deleteItem(int index)
   {
@@ -260,21 +239,28 @@ class _HomePage extends State<HomePage>
     });
   }
 
-  void _checkbox(int index)
+
+void _checkbox(Item item)
+{
+  setState((){
+  if (_checkedItemsList.contains(item))
   {
-    if (_checkedItemsList.contains(_itemsList[index]))
-    {
-      _checkedItemsList.remove(_itemsList[index]);
-    }
-    else
-    {
-      _checkedItemsList.add(_itemsList[index]);
-    }
+    _checkedItemsList.remove(item);
+    item.isChecked = false;
   }
+  else
+  {
+    _checkedItemsList.add(item);
+    item.isChecked = true;
+  }});
+}
+  
 }
 
 class StoredItemsPage extends StatefulWidget
 {
+  const StoredItemsPage({super.key});
+
   @override
   _StoredItemsPage createState() => _StoredItemsPage();
   
@@ -308,8 +294,8 @@ class _StoredItemsPage extends State<StoredItemsPage>
                     IconButton
                     (
                       tooltip: 'Uncheck Item',
-                      onPressed: () => _deleteItem(index), 
-                      icon: Icon(Icons.check_box)
+                      onPressed: () => _checkbox(_checkedItemsList[index]), 
+                      icon: const Icon(Icons.check_box)
                     )
                   ],
                 )
@@ -328,10 +314,10 @@ class _StoredItemsPage extends State<StoredItemsPage>
                     Navigator.push
                     (
                      context,
-                     MaterialPageRoute(builder: (context) => HomePage())
+                     MaterialPageRoute(builder: (context) => const HomePage())
                     );
                   }, 
-                  icon: Icon(Icons.home),
+                  icon: const Icon(Icons.home),
                 ),
                 IconButton
                 (
@@ -340,11 +326,11 @@ class _StoredItemsPage extends State<StoredItemsPage>
                     Navigator.push
                     (
                      context,
-                     MaterialPageRoute(builder: (context) => StoredItemsPage())
+                     MaterialPageRoute(builder: (context) => const StoredItemsPage())
                     );
                   }, 
                   //label: Text('Checked Item'),
-                  icon: Icon(Icons.done),
+                  icon: const Icon(Icons.done),
                 )
               ],
             ),
@@ -354,12 +340,18 @@ class _StoredItemsPage extends State<StoredItemsPage>
     );
   }
 
-  void _deleteItem(int index)
+  void _checkbox(Item item)
+{
+  setState((){
+  if (_checkedItemsList.contains(item))
   {
-    setState(() 
-    {
-      _checkedItemsList.removeAt(index);
-      _itemsList.remove(_checkedItemsList[index]);
-    });
+    _checkedItemsList.remove(item);
+    item.isChecked = false;
   }
+  else
+  {
+    _checkedItemsList.add(item);
+    item.isChecked = true;
+  }});
+}
 }
