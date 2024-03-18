@@ -44,12 +44,8 @@ class Item
 }
 
 List<Item> _checkedItemsList =[];
-List<Item> _itemsList =
-[
-  Item('Item 1', false),
-  Item('Item 2', false),
-  Item('Item 3', false),
-];
+List<Item> _itemsList =[];
+List<Item> _uncheckedItemsList = [];
 
 class _HomePage extends State<HomePage>
 {
@@ -71,6 +67,7 @@ class _HomePage extends State<HomePage>
               {
                 var a = Item(value, false);
                 _itemsList.add(a);
+                _uncheckedItemsList.add(a);
               });
               Navigator.pop(context);
             },
@@ -114,6 +111,7 @@ class _HomePage extends State<HomePage>
     {
       _itemsList.remove(item);
       _checkedItemsList.remove(item);
+      _uncheckedItemsList.remove(item);
 
     });
   }
@@ -124,10 +122,12 @@ class _HomePage extends State<HomePage>
     if (_checkedItemsList.contains(item))
     {
       _checkedItemsList.remove(item);
+      _uncheckedItemsList.add(item);
       item.isChecked = false;
     }
     else
     {
+      _uncheckedItemsList.remove(item);
       _checkedItemsList.add(item);
       item.isChecked = true;
     }});
@@ -214,6 +214,19 @@ class _HomePage extends State<HomePage>
                     );
                   }, 
                   icon: const Icon(Icons.done),
+                ),
+                IconButton
+                (
+                  tooltip:'Unchecked Items',
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                      context,
+                      MaterialPageRoute(builder: (context) => const UnstoredItemsPage())
+                    );
+                  }, 
+                  icon: const Icon(Icons.check_box_outline_blank),
                 )
               ],
             ),
@@ -249,11 +262,13 @@ class _StoredItemsPage extends State<StoredItemsPage>
     {
     if (_checkedItemsList.contains(item))
     {
+      _uncheckedItemsList.add(item);
       _checkedItemsList.remove(item);
       item.isChecked = false;
     }
     else
     {
+      _uncheckedItemsList.remove(item);
       _checkedItemsList.add(item);
       item.isChecked = true;
     }
@@ -322,6 +337,133 @@ class _StoredItemsPage extends State<StoredItemsPage>
                     );
                   },
                   icon: const Icon(Icons.done),
+                ),
+                IconButton
+                (
+                  tooltip:'Unchecked Items',
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                      context,
+                      MaterialPageRoute(builder: (context) => const UnstoredItemsPage())
+                    );
+                  }, 
+                  icon: const Icon(Icons.check_box_outline_blank),
+                )
+              ],
+            ),
+        );
+      }
+    );
+  }
+}
+
+class UnstoredItemsPage extends StatefulWidget
+{
+  const UnstoredItemsPage({super.key});
+
+  @override
+  _UnstoredItemsPage createState() => _UnstoredItemsPage();
+  
+}
+
+class _UnstoredItemsPage extends State<UnstoredItemsPage>
+{
+  void _uncheckbox(Item item)
+  {
+    setState(()
+    {
+    if (_uncheckedItemsList.contains(item))
+    {
+      _checkedItemsList.add(item);
+      _uncheckedItemsList.remove(item);
+      item.isChecked = true;
+    }
+    else
+    {
+      _checkedItemsList.remove(item);
+      _uncheckedItemsList.add(item);
+      item.isChecked = false;
+    }
+    }
+  );
+  }
+
+  @override
+  Widget build(BuildContext context) 
+  {
+    return LayoutBuilder
+    (
+      builder: (context, constraints) 
+      {
+        return Scaffold
+        (
+          body: ListView.builder
+          (
+            itemCount: _uncheckedItemsList.length,
+            itemBuilder: (context, index)
+            {
+              return ListTile
+              (
+                title: Text(_uncheckedItemsList[index].name),
+                leading: Row
+                (
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>
+                  [
+                    IconButton
+                    (
+                      tooltip: 'Check Item',
+                      onPressed: () => _uncheckbox(_uncheckedItemsList[index]), 
+                      icon: const Icon(Icons.check_box_outline_blank)
+                    )
+                  ],
+                )
+              );
+            }
+          ),
+          bottomNavigationBar: 
+            NavigationBar
+            (
+              destinations: 
+              [
+                IconButton
+                (
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                     context,
+                     MaterialPageRoute(builder: (context) => const HomePage())
+                    );
+                  }, 
+                  icon: const Icon(Icons.home),
+                ),
+                IconButton
+                (
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                     context,
+                     MaterialPageRoute(builder: (context) => const StoredItemsPage())
+                    );
+                  },
+                  icon: const Icon(Icons.done),
+                ),
+                IconButton
+                (
+                  tooltip:'Unchecked Items',
+                  onPressed: ()
+                  {
+                    Navigator.push
+                    (
+                      context,
+                      MaterialPageRoute(builder: (context) => const UnstoredItemsPage())
+                    );
+                  }, 
+                  icon: const Icon(Icons.check_box_outline_blank),
                 )
               ],
             ),
