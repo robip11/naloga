@@ -191,6 +191,7 @@ class _HomePage extends State<HomePage>
               [
                 IconButton
                 (
+                  tooltip: 'All Items',
                   onPressed: ()
                   {
                     Navigator.push
@@ -203,12 +204,13 @@ class _HomePage extends State<HomePage>
                 ),
                 IconButton
                 (
+                  tooltip:'Checked Items',
                   onPressed: ()
                   {
                     Navigator.push
                     (
-                     context,
-                     MaterialPageRoute(builder: (context) => const StoredItemsPage())
+                      context,
+                      MaterialPageRoute(builder: (context) => const StoredItemsPage())
                     );
                   }, 
                   icon: const Icon(Icons.done),
