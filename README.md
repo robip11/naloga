@@ -40,13 +40,22 @@ This is a simple todo list application built using Flutter.
 ## Structure
 
 lib
+
 |-- main.dart
+
 |-- screens
-|   |-- home_page.dart
-|   |-- stored_items_page.dart
-|   |-- unstored_items_page.dart
+
+|&emsp;|-- home_page.dart
+
+|&emsp;|-- stored_items_page.dart
+
+|&emsp;|-- unstored_items_page.dart
+
 |-- models
-|   |-- item.dart
+
+|&emsp;|-- item.dart
+
+|&emsp;|-- lists.dart
 
 ## Credits
 
