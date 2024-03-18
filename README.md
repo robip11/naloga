@@ -37,6 +37,17 @@ This is a simple todo list application built using Flutter.
 - You can mark an item as checked or unchecked by tapping on the checkbox next to it.
 - Use the bottom navigation bar to switch between viewing all items, checked items, and unchecked items.
 
+## Structure
+
+lib
+|-- main.dart
+|-- screens
+|   |-- home_page.dart
+|   |-- stored_items_page.dart
+|   |-- unstored_items_page.dart
+|-- models
+|   |-- item.dart
+
 ## Credits
 
 This application is created by Róbert Požonec.
