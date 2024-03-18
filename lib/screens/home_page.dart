@@ -3,6 +3,7 @@ import 'package:naloga/screens/stored_item_page.dart';
 import 'package:naloga/screens/unstored_item_page.dart';
 import '../models/item.dart';
 import '../models/lists.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget
 {
@@ -103,7 +104,7 @@ class _HomePage extends State<HomePage>
   {
     return LayoutBuilder
     (
-      builder: (context, constraints) 
+      builder: (context, constraints)
       {
         return Scaffold
         (
@@ -146,7 +147,7 @@ class _HomePage extends State<HomePage>
                     _checkbox(itemsList[index]);
                   });
                 },
-                );
+              );
             }
           ),
 
