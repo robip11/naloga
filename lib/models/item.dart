@@ -5,4 +5,3 @@ class Item
 
   Item(this.name, this.isChecked);
 }
-
