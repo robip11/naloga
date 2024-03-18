@@ -1,16 +1,42 @@
-# naloga
+# Flutter Todo List App
 
-A new Flutter project.
+This is a simple todo list application built using Flutter.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Add new items to the todo list.
+- Edit existing items.
+- Delete items from the list.
+- Mark items as checked or unchecked.
+- View checked and unchecked items separately.
 
-A few resources to get you started if this is your first Flutter project:
+## Installation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Ensure you have Flutter installed. If not, follow the [installation instructions](https://flutter.dev/docs/get-started/install).
+2. Clone this repository to your local machine.
+3. Open the project in your preferred IDE or text editor.
+4. Run the following command in the project directory to install dependencies:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    
+    flutter pub get
+    
+
+5. Connect a device or start an emulator.
+6. Run the app using the following command:
+
+    
+    flutter run
+    
+
+## Usage
+
+- Upon launching the app, you will see a list of items.
+- To add a new item, tap on the floating action button and enter the item's name in the dialog box that appears.
+- To edit an existing item, tap on the edit icon next to the item, make your changes in the dialog box, and save.
+- To delete an item, tap on the delete icon next to the item.
+- You can mark an item as checked or unchecked by tapping on the checkbox next to it.
+- Use the bottom navigation bar to switch between viewing all items, checked items, and unchecked items.
+
+## Credits
+
+This application is created by Róbert Požonec.
