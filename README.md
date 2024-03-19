@@ -22,10 +22,6 @@ This is a simple todo list application built using Flutter.
     
 
 5. Connect a device or start an emulator.
-6. Run the app using the following command:
-
-    
-    flutter run
     
 
 ## Usage
