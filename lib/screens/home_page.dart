@@ -3,7 +3,6 @@ import 'package:naloga/screens/stored_item_page.dart';
 import 'package:naloga/screens/unstored_item_page.dart';
 import '../models/item.dart';
 import '../models/lists.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget
 {
